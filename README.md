@@ -1,36 +1,43 @@
 ## Lambda-Git
 
-This project can be run as an AWS Lambda function which you call from a BitBucket Web Hook.
-When the function is called, it installs git on the lambda, clones the BitBucket repo, and 
-mirrors any changes to an AWS CodeCommit repo.
+This project syncs git repos between two different providers. Your users can work with BitBucket (or any git provider) and sync the changes to CodeCommit (or any other git provider). 
+This project is run as an AWS Lambda function which you call from a webhook.
+
+When the function is called, it installs git in the lambda environment, clones the source repo, and 
+mirrors any changes to the destination repo.
 
 This enables you to use a git provider like BitBucket with good support for things like code 
 review discussion in Pull Requests, while still using a git provider like CodeCommit with good 
 support for integration into other AWS Products. 
 
-Note that this project could work for any two git providers, BitBucket & CodeCommit are
-just examples.
-
 ### Set up
 
 Zip up the project like this:
 
-`$ zip lamgit.zip git-2.4.3.tar git-mirror.sh lambda_function.py`
+`$ zip lamgit.zip git-2.4.3.tar *.sh *.py`
 
-Upload the zip file to a new Lambda function, and create and fill in these environment variables:
+Upload the zip file to a new Lambda function. Create these environment variables:
 
-   - BIT_USER - Username for BitBucket Account
-   - BIT_PASS - Password for BitBucket Account 
-   - BIT_REPO - Domain and path to BitBucket repo
-   - AWS_USER - Username for CodeCommit Account
-   - AWS_PASS - Password for CodeCommit Account 
-   - AWS_REPO - Domain and path to CodeCommit repo
+   - FROM_USER - Username for source git account
+   - FROM_PASS - Password for source git account 
+   - FROM_REPO - Domain and path for source repo eg. bitbucket.org/user/project.git
+   - TO_USER - Username for destination git account
+   - TO_PASS - Password for destination git account 
+   - TO_REPO - Domain and path for destination repo eg. git-codecommit.ca-central-1.amazonaws.com/v1/repos/project
+
+The project also supports reading these credentials from AWS Secrets Manager. To use this option, create a secret with the above keys, and provide the following environment variables, as supplied by Secrets Manager:
+
+   - SECRET_NAME
+   - SECRET_URL
+   - SECRET_REGION
+
+Note that you'll need to add permissions for Secrets Manager to the IAM role your lambda is using.
    
-   Note that special characters in passwords may need to be URL escaped. eg. instead of `@`, `%40`
+Note that special characters in passwords may need to be URL escaped. eg. instead of `@`, `%40`
    
-   Note that your AWS CodeCommit username & password is different from your IAM username & password. 
+Note that your AWS CodeCommit username & password is different from your IAM username & password. 
    
-Configure the function to be callable via API Gateway, and enter the invocation url into your BitBucket Web Hooks setup.
+Configure the function to be callable via API Gateway, and enter the invocation url into your source repo's webhooks setup.
 
 ### Thanks
 
