@@ -28,14 +28,16 @@ Upload the zip file to a new Lambda function. Create these environment variables
 The project also supports reading these credentials from AWS Secrets Manager. To use this option, create a secret with the above keys, and provide the following environment variables, as supplied by Secrets Manager:
 
    - SECRET_NAME
-   - SECRET_URL
+   - [SECRET_URL](https://docs.aws.amazon.com/general/latest/gr/rande.html)
    - SECRET_REGION
+
+Note that the SECRET\_URL variable is the AWS Secrets Manager Endpoint. Make sure to prefix the Endpoint with "https://", i.e. SECRET_URL="https://secretsmanager.us-east-1.amazonaws.com" 
 
 Note that you'll need to add permissions for Secrets Manager to the IAM role your lambda is using.
    
 Note that special characters in passwords may need to be URL escaped. eg. instead of `@`, `%40`
    
-Note that your AWS CodeCommit username & password is different from your IAM username & password. 
+Note that your [AWS CodeCommit username & password](https://aws.amazon.com/blogs/devops/introducing-git-credentials-a-simple-way-to-connect-to-aws-codecommit-repositories-using-a-static-user-name-and-password/) is different from your IAM username & password. 
    
 Configure the function to be callable via API Gateway, and enter the invocation url into your source repo's webhooks setup.
 
