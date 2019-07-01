@@ -11,5 +11,5 @@ cd /tmp/repo/
 /tmp/usr/bin/git clone --bare "https://$1:$2@$3"
 
 echo pushing up to aws
-cd test-project.git
+cd `echo "$3" | cut -d"/" -f3` 
 /tmp/usr/bin/git push --mirror "https://$4:$5@$6"
